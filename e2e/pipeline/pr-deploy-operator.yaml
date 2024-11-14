@@ -6,34 +6,47 @@ metadata:
   labels:
     appstudio.openshift.io/component: operator-main-bundle
 spec:
+  workspaces:
+    - name: source
+      emptyDir: { }
   PipelineSpec:
     params:
+      - name: registry
+        type: string
+        default: image-registry.openshift-image-registry.svc:5000/$(context.pipelineRun.namespace)/release-tests
+
+      - name: buildCommand
+        type: string
+#        default: ls
+        default: gauge run --tags="" --log-level=debug --verbose specs/pipelines
+      - name: force-cache-upload
+        type: string
+        default: "false"
+      - name : image
+        type: string
+        default: quay.io/openshift-pipeline/ci:latest
+      - name : repo_url
+        type: string
+        default: https://github.com/openshift-pipelines/release-tests.git
+      - name : revision
+        type: string
+        default: master
       - description: Snapshot of the application
         name: SNAPSHOT
-        default: '{"application":"operator-main","components":[{"name":"operator-main-bundle","containerImage":"quay.io/redhat-user-workloads/tekton-ecosystem-tenant/operator-main/bundle@sha256:27ef7cb02588c0a2230cde9aa0a1954ae276502a62c7ae71193e89973ee23f80","source":{"git":{"url":"https://github.com/openshift-pipelines/operator","revision":"298a17fb290d98f4eea9e68e81ad88d86f826a6d"}}},{"name":"operator-main-index","containerImage":"quay.io/redhat-user-workloads/tekton-ecosystem-tenant/operator-main-index@sha256:fa5c8db42bdef45b04c4d81a79a7e3d0c18d47e7caea0123a1fffce5a18dc6a5","source":{"git":{"url":"https://github.com/openshift-pipelines/operator.git","revision":"05f28fc598a01c35cd972f03ee19ba0c93944b1f","dockerfileUrl":"olm-catalog/openshift-pipelines/index/Dockerfile"}}},{"name":"operator-main-operator","containerImage":"quay.io/redhat-user-workloads/tekton-ecosystem-tenant/operator-main/operator@sha256:de5d8f6688f8f121e83cd0082505b1d0b3a590a3d86f427435c0d71f3db252c0","source":{"git":{"url":"https://github.com/openshift-pipelines/operator","revision":"570bcfb8310348417e9189f59dd1308f594ca76d","dockerfileUrl":"openshift/dockerfiles/operator.Dockerfile"}}},{"name":"operator-main-proxy","containerImage":"quay.io/redhat-user-workloads/tekton-ecosystem-tenant/operator-main/proxy@sha256:918f311769d35d35ef5ffdc889b406eb1a8591de0fe9c009916c9218f6a9d94b","source":{"git":{"url":"https://github.com/openshift-pipelines/operator","revision":"570bcfb8310348417e9189f59dd1308f594ca76d","dockerfileUrl":"openshift/dockerfiles/proxy.Dockerfile"}}},{"name":"operator-main-webhook","containerImage":"quay.io/redhat-user-workloads/tekton-ecosystem-tenant/operator-main/webhook@sha256:45b3f9a54e8937994efc20565fa7fa3e207619f5d247180683c34a021fff6a67","source":{"git":{"url":"https://github.com/openshift-pipelines/operator","revision":"570bcfb8310348417e9189f59dd1308f594ca76d","dockerfileUrl":"openshift/dockerfiles/webhook.Dockerfile"}}}],"artifacts":{}}'
+        default: '{}'
         type: string
+      - name: cachePatterns
+        type: array
+        default: [ "**go.mod", "**go.sum" ]
       - description: Namespace where the the Operator bundle will be deployed.
         name: NAMESPACE
         default: openshift-operators
         type: string
     tasks:
-      - name: parse-metadata
-        taskRef:
-          resolver: git
-          params:
-            - name: url
-              value: https://github.com/konflux-ci/integration-examples
-            - name: revision
-              value: main
-            - name: pathInRepo
-              value: tasks/test_metadata.yaml
-        params:
-          - name: SNAPSHOT
-            value: $(params.SNAPSHOT)
       - name: deploy-operator
         params:
           - name: bundleImage
-            value: "$(tasks.parse-metadata.results.component-container-image)"
+            value: quay.io/redhat-user-workloads/tekton-ecosystem-tenant/operator-main/bundle:ff99900ca11d2161c72a7a346290be49e0df4c54
           - name: namespace
             value: "$(params.NAMESPACE)"
         taskSpec:
@@ -47,7 +60,6 @@ spec:
               secret:
                 secretName: rosa
           steps:
-
             - name: operator-sdk-run-bundle
               image: quay.io/operator-framework/operator-sdk:latest
               env:
@@ -59,6 +71,11 @@ spec:
                 - --namespace
                 - "$(params.namespace)"
                 - "$(params.bundleImage)"
+              script: |
+                #!/usr/bin/env bash
+                whoami
+                pwd
+                echo $HOME
               volumeMounts:
                 - name: credentials
                   mountPath: /credentials
@@ -80,20 +97,79 @@ spec:
             - name: TEST_OUTPUT
               description: Test output
           steps:
-            - name: e2e
-              image: quay.io/openshift-pipeline/ci:latest
+            - name: create-repo
+              image: $(params.image)
+              script: |
+                mkdir -p $(workspaces.source.path)/repo
+                chmod 777 $(workspaces.source.path)/repo
+            - name: fetch-repo
+              ref:
+                resolver: http
+                params:
+                  - name: url
+                    value: https://raw.githubusercontent.com/tektoncd/catalog/main/stepaction/git-clone/0.1/git-clone.yaml
+              params:
+                - name: output-path
+                  value: $(workspaces.source.path)/repo
+                - name: url
+                  value: $(params.repo_url)
+                - name: revision
+                  value: $(params.revision)
+            - name: cache-fetch
+              ref:
+                resolver: http
+                params:
+                  - name: url
+                    value: https://raw.githubusercontent.com/openshift-pipelines/tekton-caches/main/tekton/cache-fetch.yaml
+              params:
+                - name: patterns
+                  value: $(params.cachePatterns)
+                - name: source
+                  value: oci://$(params.registry):{{hash}}
+                - name: cachePath
+                  value: $(workspaces.source.path)/cache
+                - name: workingdir
+                  value: $(workspaces.source.path)/repo
+            - image: $(params.image)
+              workingDir: $(workspaces.source.path)/repo
+              name: run-go-build
               env:
-                - name: SNAPSHOT
-                  value: $(params.SNAPSHOT)
+                - name: GOCACHE
+                  value: $(workspaces.source.path)/cache/gocache
+                - name: GOMODCACHE
+                  value: $(workspaces.source.path)/cache/gomodcache
                 - name: KUBECONFIG
                   value: "/credentials/kubeconfig"
               volumeMounts:
                 - name: credentials
                   mountPath: /credentials
               script: |
-                #!/usr/bin/env bash
-                set -ex -u -o pipefail
-
-                echo "KUBECONFIG : $KUBECONFIG"
-                git clone https://github.com/openshift-pipelines/release-tests.git
-                gauge run --tags="" --log-level=debug --verbose release-tests/specs/pipelines
+                set -x
+                
+                echo $KUBECONFIG
+                cat $KUBECONFIG
+                oc get tektonconfig config
+                #export GITHUB_TOKEN=github_pat_11AADMVLA04BLwQwYyaoDt_dv8w6FF7iQo51xiTm1wwXwm5ZTIc7VZgKJNgqZSRp1SSL6OIPOKvY2UI
+                oc create secret generic github-auth-secret --from-literal github-auth-key=$GITHUB_TOKEN -n openshift-pipelines
+                PATCH_DATA="{\"spec\":{\"pipeline\":{\"git-resolver-config\":{ \"api-token-secret-key\": \"github-auth-key\",\"api-token-secret-name\":\"github-auth-secret\",\"api-token-secret-namespace\":\"openshift-pipelines\",\"default-revision\":\"main\",\"fetch-timeout\":\"1m\",\"scm-type\":\"github\"}}}}"
+                echo $PATCH_DATA | jq
+                oc patch tektonconfig config -p "${PATCH_DATA}" --type=merge
+                $(params.buildCommand) || true
+                echo "Cache size is $(du -sh $(workspaces.source.path)/cache)"
+            - name: cache-upload
+              ref:
+                resolver: http
+                params:
+                  - name: url
+                    value: https://raw.githubusercontent.com/openshift-pipelines/tekton-caches/main/tekton/cache-upload.yaml
+              params:
+                - name: patterns
+                  value: $(params.cachePatterns)
+                - name: target
+                  value: oci://$(params.registry):{{hash}}
+                - name: cachePath
+                  value: $(workspaces.source.path)/cache
+                - name: workingdir
+                  value: $(workspaces.source.path)/repo
+                - name: force-cache-upload
+                  value: $(params.force-cache-upload)

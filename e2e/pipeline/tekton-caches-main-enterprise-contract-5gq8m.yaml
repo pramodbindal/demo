@@ -1,0 +1,232 @@
+apiVersion: tekton.dev/v1
+kind: PipelineRun
+metadata:
+  annotations:
+    build.appstudio.openshift.io/repo: https://github.com/openshift-pipelines/tekton-caches?rev=f77aad07e75182411dca6705075c655e9f675b37
+    build.appstudio.redhat.com/commit_sha: f77aad07e75182411dca6705075c655e9f675b37
+    build.appstudio.redhat.com/pull_request_number: "126"
+    build.appstudio.redhat.com/target_branch: main
+    chains.tekton.dev/signed: "true"
+    pac.test.appstudio.openshift.io/branch: main
+    pac.test.appstudio.openshift.io/check-run-id: "32646985164"
+    pac.test.appstudio.openshift.io/controller-info: '{"name":"default","configmap":"pipelines-as-code","secret":"pipelines-as-code-secret",
+      "gRepo": "pipelines-as-code"}'
+    pac.test.appstudio.openshift.io/event-type: pull_request
+    pac.test.appstudio.openshift.io/git-auth-secret: pac-gitauth-hcqnwv
+    pac.test.appstudio.openshift.io/git-provider: github
+    pac.test.appstudio.openshift.io/installation-id: "34496476"
+    pac.test.appstudio.openshift.io/log-url: https://console.redhat.com/application-pipeline/ns/tekton-ecosystem-tenant/pipelinerun/tekton-caches-main-cache-on-pull-request-9s9s2
+    pac.test.appstudio.openshift.io/max-keep-runs: "3"
+    pac.test.appstudio.openshift.io/on-cel-expression: event == "pull_request" &&
+      target_branch == "main" && ("***".pathChanged() || ".konflux/dockerfiles/cache.Dockerfile".pathChanged()
+      || ".tekton/tekton-caches-main-cache-pull-request.yaml".pathChanged() || ".tekton/docker-build-ta.yaml".pathChanged())
+    pac.test.appstudio.openshift.io/original-prname: tekton-caches-main-cache-on-pull-request
+    pac.test.appstudio.openshift.io/pull-request: "126"
+    pac.test.appstudio.openshift.io/repo-url: https://github.com/openshift-pipelines/tekton-caches
+    pac.test.appstudio.openshift.io/repository: tekton-caches-main-cache
+    pac.test.appstudio.openshift.io/sender: red-hat-konflux[bot]
+    pac.test.appstudio.openshift.io/sha: f77aad07e75182411dca6705075c655e9f675b37
+    pac.test.appstudio.openshift.io/sha-title: Update Konflux references
+    pac.test.appstudio.openshift.io/sha-url: https://github.com/openshift-pipelines/tekton-caches/commit/f77aad07e75182411dca6705075c655e9f675b37
+    pac.test.appstudio.openshift.io/source-branch: konflux/references/main
+    pac.test.appstudio.openshift.io/source-repo-url: https://github.com/openshift-pipelines/tekton-caches
+    pac.test.appstudio.openshift.io/state: completed
+    pac.test.appstudio.openshift.io/url-org: openshift-pipelines
+    pac.test.appstudio.openshift.io/url-repository: tekton-caches
+    results.tekton.dev/childReadyForDeletion: "true"
+    results.tekton.dev/log: tekton-ecosystem-tenant/results/9e2cfbc1-3e78-4fe9-be69-cad7846e20f5/logs/4647ef96-77fb-330d-bcbb-8ed3786af66a
+    results.tekton.dev/record: tekton-ecosystem-tenant/results/9e2cfbc1-3e78-4fe9-be69-cad7846e20f5/records/9e2cfbc1-3e78-4fe9-be69-cad7846e20f5
+    results.tekton.dev/result: tekton-ecosystem-tenant/results/9e2cfbc1-3e78-4fe9-be69-cad7846e20f5
+    test.appstudio.openshift.io/create-groupsnapshot-status: The build pipelineRun
+      tekton-ecosystem-tenant/tektoncd-pipeline-main-nop-on-pull-request-w5cvg with
+      pr group konflux/references/main is still running, won't create group snapshot
+    test.appstudio.openshift.io/pipelinerunstarttime: "1730974107"
+    test.appstudio.openshift.io/pr-group: konflux/references/main
+    test.appstudio.openshift.io/source-repo-url: https://github.com/openshift-pipelines/tekton-caches
+    test.appstudio.openshift.io/status: '[{"scenario":"tekton-caches-main-enterprise-contract","status":"Pending","lastUpdateTime":"2024-11-07T10:47:24.312655384Z","details":"Pending"}]'
+  creationTimestamp: "2024-11-07T10:47:24Z"
+  deletionGracePeriodSeconds: 0
+  deletionTimestamp: "2024-11-07T12:12:51Z"
+  finalizers:
+  - test.appstudio.openshift.io/pipelinerun
+  generateName: tekton-caches-main-enterprise-contract-
+  generation: 2
+  labels:
+    appstudio.openshift.io/application: tekton-caches-main
+    appstudio.openshift.io/component: tekton-caches-main-cache
+    appstudio.openshift.io/snapshot: tekton-caches-main-r545p
+    build.appstudio.redhat.com/pipeline: enterprise-contract
+    pac.test.appstudio.openshift.io/check-run-id: "32646985164"
+    pac.test.appstudio.openshift.io/event-type: pull_request
+    pac.test.appstudio.openshift.io/original-prname: tekton-caches-main-cache-on-pull-request
+    pac.test.appstudio.openshift.io/pull-request: "126"
+    pac.test.appstudio.openshift.io/repository: tekton-caches-main-cache
+    pac.test.appstudio.openshift.io/sha: f77aad07e75182411dca6705075c655e9f675b37
+    pac.test.appstudio.openshift.io/state: completed
+    pac.test.appstudio.openshift.io/url-org: openshift-pipelines
+    pac.test.appstudio.openshift.io/url-repository: tekton-caches
+    pipelines.appstudio.openshift.io/type: test
+    tekton.dev/pipeline: enterprise-contract
+    test.appstudio.openshift.io/pipelinerunfinishtime: "1730976438"
+    test.appstudio.openshift.io/pr-group-sha: cf9211b18d7bd8ea4b8ae890f78bb4cce66beb2d7e45f7fb6ecdc83ef00663
+    test.appstudio.openshift.io/scenario: tekton-caches-main-enterprise-contract
+    test.appstudio.openshift.io/type: component
+  name: tekton-caches-main-enterprise-contract-5gq8m
+  namespace: tekton-ecosystem-tenant
+  ownerReferences:
+  - apiVersion: appstudio.redhat.com/v1alpha1
+    blockOwnerDeletion: true
+    controller: true
+    kind: Snapshot
+    name: tekton-caches-main-r545p
+    uid: 0ad28dd1-25da-4fde-9557-d68cfa2309fa
+  resourceVersion: "2602374701"
+  uid: 9e2cfbc1-3e78-4fe9-be69-cad7846e20f5
+spec:
+  params:
+  - name: SNAPSHOT
+    value: '{"application":"tekton-caches-main","components":[{"name":"tekton-caches-main-cache","containerImage":"quay.io/redhat-user-workloads/tekton-ecosystem-tenant/tekton-caches-main/cache@sha256:93ffb32d1a56b09e261c37cdb91c09610d12f6d58db515a53b1b5db5bada51a5","source":{"git":{"url":"https://github.com/openshift-pipelines/tekton-caches","revision":"f77aad07e75182411dca6705075c655e9f675b37"}}}],"artifacts":{}}'
+  - name: POLICY_CONFIGURATION
+    value: tekton-ecosystem-tenant/tekton-ecosystem-tenant-containers
+  pipelineRef:
+    params:
+    - name: url
+      value: https://github.com/konflux-ci/build-definitions
+    - name: revision
+      value: main
+    - name: pathInRepo
+      value: pipelines/enterprise-contract.yaml
+    resolver: git
+  taskRunTemplate:
+    podTemplate:
+      nodeSelector:
+        konflux-ci.dev/workload: konflux-tenants
+      tolerations:
+      - effect: NoSchedule
+        key: konflux-ci.dev/workload
+        operator: Equal
+        value: konflux-tenants
+    serviceAccountName: appstudio-pipeline
+  timeouts:
+    finally: 2h0m0s
+    pipeline: 6h0m0s
+    tasks: 4h0m0s
+status:
+  childReferences:
+  - apiVersion: tekton.dev/v1
+    kind: TaskRun
+    name: tekton-caches-main-enterprise-contract-5gq8m-verify
+    pipelineTaskName: verify
+  completionTime: "2024-11-07T11:02:04Z"
+  conditions:
+  - lastTransitionTime: "2024-11-07T11:02:04Z"
+    message: 'Tasks Completed: 1 (Failed: 1, Cancelled 0), Skipped: 0'
+    reason: Failed
+    status: "False"
+    type: Succeeded
+  pipelineSpec:
+    params:
+    - description: |
+        Spec section of an ApplicationSnapshot resource. Not all fields of the
+        resource are required. A minimal example:
+          {
+            "components": [
+              {
+                "containerImage": "quay.io/example/repo:latest"
+              }
+            ]
+          }
+        Each "containerImage" in the "components" array is validated.
+      name: SNAPSHOT
+      type: string
+    - default: enterprise-contract-service/default
+      description: |
+        Name of the policy configuration (EnterpriseContractConfiguration
+        object) to use. `namespace/name` or `name` syntax supported. If
+        namespace is omitted the namespace where the task runs is used.
+      name: POLICY_CONFIGURATION
+      type: string
+    - default: ""
+      description: |
+        Path to a directory containing SSL certs to be used when communicating
+        with external services. This is useful when using the integrated registry
+        and a local instance of Rekor on a development cluster which may use
+        certificates issued by a not-commonly trusted root CA. In such cases,
+        "/var/run/secrets/kubernetes.io/serviceaccount" is a good value. Multiple
+        paths can be provided by using the ":" separator.
+      name: SSL_CERT_DIR
+      type: string
+    - default: k8s://openshift-pipelines/public-key
+      description: |
+        Public key used to verify signatures. Must be a valid k8s cosign
+        reference, e.g. k8s://my-space/my-secret where my-secret contains
+        the expected cosign.pub attribute.
+      name: PUBLIC_KEY
+      type: string
+    - default: 5m0s
+      description: Timeout setting for `ec validate`.
+      name: TIMEOUT
+      type: string
+    - default: "1"
+      description: Number of parallel workers to use for policy evaluation.
+      name: WORKERS
+      type: string
+    - default: trusted-ca
+      description: The name of the ConfigMap to read CA bundle data from.
+      name: CA_TRUST_CONFIGMAP_NAME
+      type: string
+    - default: ca-bundle.crt
+      description: The name of the key in the ConfigMap that contains the CA bundle
+        data.
+      name: CA_TRUST_CONFIG_MAP_KEY
+      type: string
+    - default: "false"
+      description: Reduce the Snapshot to only the component whose build caused the
+        Snapshot to be created
+      name: SINGLE_COMPONENT
+      type: string
+    - default: pr/$(context.pipelineRun.name)
+      description: PipelineRun ID
+      name: SINGLE_COMPONENT_CUSTOM_RESOURCE
+      type: string
+    results:
+    - description: ""
+      name: TEST_OUTPUT
+      value: $(tasks.verify.results.TEST_OUTPUT)
+    tasks:
+    - name: verify
+      params:
+      - name: POLICY_CONFIGURATION
+        value: tekton-ecosystem-tenant/tekton-ecosystem-tenant-containers
+      - name: IMAGES
+        value: '{"application":"tekton-caches-main","components":[{"name":"tekton-caches-main-cache","containerImage":"quay.io/redhat-user-workloads/tekton-ecosystem-tenant/tekton-caches-main/cache@sha256:93ffb32d1a56b09e261c37cdb91c09610d12f6d58db515a53b1b5db5bada51a5","source":{"git":{"url":"https://github.com/openshift-pipelines/tekton-caches","revision":"f77aad07e75182411dca6705075c655e9f675b37"}}}],"artifacts":{}}'
+      - name: SSL_CERT_DIR
+        value: ""
+      - name: STRICT
+        value: "true"
+      - name: PUBLIC_KEY
+        value: k8s://openshift-pipelines/public-key
+      - name: IGNORE_REKOR
+        value: "true"
+      - name: TIMEOUT
+        value: 5m0s
+      - name: WORKERS
+        value: "1"
+      - name: CA_TRUST_CONFIGMAP_NAME
+        value: trusted-ca
+      - name: CA_TRUST_CONFIG_MAP_KEY
+        value: ca-bundle.crt
+      - name: SINGLE_COMPONENT
+        value: "false"
+      - name: SINGLE_COMPONENT_CUSTOM_RESOURCE
+        value: pr/tekton-caches-main-enterprise-contract-5gq8m
+      taskRef:
+        params:
+        - name: bundle
+          value: quay.io/enterprise-contract/ec-task-bundle:snapshot@sha256:978d48e842a3d7060035f8006b43f3aec84eb87deac3ada47a32b19d96417cbc
+        - name: name
+          value: verify-enterprise-contract
+        - name: kind
+          value: task
+        resolver: bundles
+  startTime: "2024-11-07T10:47:24Z"

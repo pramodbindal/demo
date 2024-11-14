@@ -1,0 +1,17 @@
+apiVersion: tekton.dev/v1
+kind: PipelineRun
+metadata:
+  generateName: pbindal-pipelines-e2e-tests-
+spec:
+  pipelineRef:
+    resolver: git
+    params:
+      - name: name
+        value: e2e-tests-tektoncd-pipelines
+      - name: url
+        value: https://github.com/pramodbindal/demo
+      - name: revision
+        value: main
+      - name: pathInRepo
+        value: e2e/pipeline/e2e-tektoncd-pipeline.yaml
+
