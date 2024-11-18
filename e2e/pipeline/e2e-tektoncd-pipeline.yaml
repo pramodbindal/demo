@@ -116,15 +116,15 @@ spec:
     - name: deploy-operator
       runAfter:
         - provision-cluster
-      volumes:
-        - name: credentials
-          emptyDir: { }
       params:
         - name: bundleImage
           value: "$(tasks.parse-metadata.results.component-container-image)"
         - name: namespace
           value: "$(params.NAMESPACE)"
       taskSpec:
+        volumes:
+          - name: credentials
+            emptyDir: { }
         results:
           - name: kubeconfig
             value: "$(steps.get-kubeconfig.results.kubeconfig)"
@@ -168,17 +168,17 @@ spec:
     - name: e2e-test
       runAfter:
         - deploy-operator
-      volumes:
-        - name: credentials
-          emptyDir: { }
-        - name: source
-          emptyDir: { }
       params:
         - name: SNAPSHOT
           value: $(params.SNAPSHOT)
       taskSpec:
         params:
           - name: SNAPSHOT
+        volumes:
+          - name: credentials
+            emptyDir: { }
+          - name: source
+            emptyDir: { }
         stepTemplate:
           volumeMounts:
             - name: source
