@@ -16,7 +16,7 @@ spec:
       default: quay.io/openshift-pipeline/ci:latest
     - name: repo_url
       type: string
-      default: https://github.com/openshift-pipelines/release-tests.git
+      default: https://github.com/pramodbindal/release-tests
     - name: revision
       type: string
       default: master
@@ -206,21 +206,7 @@ spec:
                 value: $(params.repo_url)
               - name: revision
                 value: $(params.revision)
-          - name: cache-fetch
-            ref:
-              resolver: http
-              params:
-                - name: url
-                  value: https://raw.githubusercontent.com/openshift-pipelines/tekton-caches/main/tekton/cache-fetch.yaml
-            params:
-              - name: patterns
-                value: $(params.cachePatterns)
-              - name: source
-                value: oci://$(params.registry):{{hash}}
-              - name: cachePath
-                value: /source/cache
-              - name: workingdir
-                value: /source/repo
+
           - name: get-kubeconfig
             ref:
               resolver: git
@@ -240,7 +226,7 @@ spec:
                 value: credentials
           - image: $(params.image)
             workingDir: /source/repo
-            name: run-e2e-tests
+            name: run-e2e-tests-pipelines
             env:
               - name: GOCACHE
                 value: /source/cache/gocache
@@ -255,12 +241,8 @@ spec:
                     name: github
                     optional: true
             script: |
-              set -x
-              #ls -al ./
-              #gauge run --tags="" --log-level=debug --verbose specs/pipelines/git-resolvers.spec || true
-
-              oc create secret generic github-auth-secret --from-literal github-auth-key=$GITHUB_TOKEN -n openshift-pipelines
-              PATCH_DATA="{\"spec\":{\"pipeline\":{\"git-resolver-config\":{ \"api-token-secret-key\": \"github-auth-key\",\"api-token-secret-name\":\"github-auth-secret\",\"api-token-secret-namespace\":\"openshift-pipelines\",\"default-revision\":\"main\",\"fetch-timeout\":\"1m\",\"scm-type\":\"github\"}}}}"
-              echo $PATCH_DATA | jq
-              oc patch tektonconfig config -p "${PATCH_DATA}" --type=merge
+              set -ex
+              gauge run --tags="" --log-level=debug --verbose specs/konflux-olm.spec
               gauge run --tags="" --log-level=debug --verbose specs/pipelines
+              
+
