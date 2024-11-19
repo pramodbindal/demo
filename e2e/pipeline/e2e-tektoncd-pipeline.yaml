@@ -256,8 +256,8 @@ spec:
                     optional: true
             script: |
               set -x
-              ls -al ./
-              gauge run --tags="" --log-level=debug --verbose specs/pipelines/git-resolvers.spec || true
+              #ls -al ./
+              #gauge run --tags="" --log-level=debug --verbose specs/pipelines/git-resolvers.spec || true
 
               oc create secret generic github-auth-secret --from-literal github-auth-key=$GITHUB_TOKEN -n openshift-pipelines
               PATCH_DATA="{\"spec\":{\"pipeline\":{\"git-resolver-config\":{ \"api-token-secret-key\": \"github-auth-key\",\"api-token-secret-name\":\"github-auth-secret\",\"api-token-secret-namespace\":\"openshift-pipelines\",\"default-revision\":\"main\",\"fetch-timeout\":\"1m\",\"scm-type\":\"github\"}}}}"
