@@ -240,7 +240,9 @@ spec:
                     key: github-token
                     name: github
                     optional: true
-            script:  gauge run --tags="" --log-level=debug --verbose specs/konflux-olm.spec
+            script:  |
+              gauge run --tags="" --log-level=debug --verbose specs/konflux-olm.spec
+              gauge run --tags="" --log-level=debug --verbose specs/pipelines/git-resolvers.spec
 
               
           - image: $(params.image)
@@ -253,6 +255,6 @@ spec:
                 value: /source/cache/gomodcache
               - name: KUBECONFIG
                 value: "/credentials/$(tasks.deploy-operator.results.kubeconfig)"
-            script: gauge run --tags="" --log-level=debug --verbose specs/pipelines
+            script: gauge run --tags="" --log-level=debug --verbose specs/pipelines/
               
 
