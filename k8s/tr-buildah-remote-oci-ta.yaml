@@ -1,0 +1,7 @@
+apiVersion: tekton.dev/v1beta1
+kind: TaskRun
+metadata:
+  generateName: buildah-remote-oci-ta-
+spec:
+  taskRef:
+    name: buildah-remote-oci-ta

@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: ci
+spec:
+  containers:
+    - name: ci
+      image: quay.io/openshift-pipeline/ci:latest
+      command: ['sh', '-c', 'echo "Hello, Kubernetes!" && sleep 36000']

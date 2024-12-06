@@ -224,9 +224,10 @@ spec:
                 value: "$(tasks.provision-cluster.results.clusterName)"
               - name: credentials
                 value: credentials
-          - image: $(params.image)
+
+          - name: configure-tekton-config
+            image: $(params.image)
             workingDir: /source/repo
-            name: configure-tekton-config
             env:
               - name: GOCACHE
                 value: /source/cache/gocache
@@ -242,12 +243,11 @@ spec:
                     optional: true
             script:  |
               gauge run --tags="" --log-level=debug --verbose specs/konflux-olm.spec
-              gauge run --tags="" --log-level=debug --verbose specs/pipelines/git-resolvers.spec
 
               
-          - image: $(params.image)
+          - name: run-e2e-tests
+            image: $(params.image)
             workingDir: /source/repo
-            name: run-e2e-tests-pipelines
             env:
               - name: GOCACHE
                 value: /source/cache/gocache
@@ -255,6 +255,10 @@ spec:
                 value: /source/cache/gomodcache
               - name: KUBECONFIG
                 value: "/credentials/$(tasks.deploy-operator.results.kubeconfig)"
-            script: gauge run --tags="" --log-level=debug --verbose specs/pipelines/
-              
+            script: |
+                gauge run --tags="" --log-level=debug --verbose specs/pipelines/
+                gauge run --tags="" --log-level=debug --verbose specs/triggers/
+                gauge run --tags="" --log-level=debug --verbose specs/pac/
+
+
 

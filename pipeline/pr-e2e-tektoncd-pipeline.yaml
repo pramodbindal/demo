@@ -1,0 +1,22 @@
+apiVersion: tekton.dev/v1
+kind: PipelineRun
+metadata:
+  generateName: pbindal-pipelines-e2e-tests-
+  labels:
+    appstudio.openshift.io/component: operator-main-bundle
+spec:
+  params:
+    - name: SNAPSHOT
+      value: {"application":"operator-main","components":[{"name":"operator-main-bundle","containerImage":"quay.io/redhat-user-workloads/tekton-ecosystem-tenant/operator-main/bundle@sha256:e847ce42c4e36fb6a9b2ebde307634e990429cf5d590889d6d4c3e71ac86072c","source":{"git":{"url":"https://github.com/openshift-pipelines/operator","revision":"8fa84d7e76fe4f70fe94edbbd9a3ab9a38b357f9"}}},{"name":"operator-main-index","containerImage":"quay.io/redhat-user-workloads/tekton-ecosystem-tenant/operator-main-index@sha256:df51b1f0dd4b2e21dacb03adafd00505a8d29c29d22b9559dd0144fc17d214b5","source":{"git":{"url":"https://github.com/openshift-pipelines/operator.git","revision":"3fad08e281509455ee97a23274d7048997d46378","dockerfileUrl":"olm-catalog/openshift-pipelines/index/Dockerfile"}}},{"name":"operator-main-operator","containerImage":"quay.io/redhat-user-workloads/tekton-ecosystem-tenant/operator-main/operator@sha256:cdd7da797271610a301330c04ad8818480c10890e2f69f33ea11e41bacf77741","source":{"git":{"url":"https://github.com/openshift-pipelines/operator","revision":"50de9950f5775da24699e91d85f08fb12cc4b326","dockerfileUrl":"openshift/dockerfiles/operator.Dockerfile"}}},{"name":"operator-main-proxy","containerImage":"quay.io/redhat-user-workloads/tekton-ecosystem-tenant/operator-main/proxy@sha256:271bdd61a9a2df8a0ca06d234553da93f050553fe2f84e41abea29a28e1a87ac","source":{"git":{"url":"https://github.com/openshift-pipelines/operator","revision":"3fad08e281509455ee97a23274d7048997d46378","dockerfileUrl":"openshift/dockerfiles/proxy.Dockerfile"}}},{"name":"operator-main-webhook","containerImage":"quay.io/redhat-user-workloads/tekton-ecosystem-tenant/operator-main/webhook@sha256:dc77bfe268792dee712809bf3f5ead5a19ad307c6cad2478aea81ab3223f369a","source":{"git":{"url":"https://github.com/openshift-pipelines/operator","revision":"50de9950f5775da24699e91d85f08fb12cc4b326","dockerfileUrl":"openshift/dockerfiles/webhook.Dockerfile"}}}],"artifacts":{}}
+  pipelineRef:
+    resolver: git
+    params:
+      - name: name
+        value: e2e-tests-tektoncd-pipelines
+      - name: url
+        value: https://github.com/pramodbindal/demo
+      - name: revision
+        value: main
+      - name: pathInRepo
+        value: e2e/pipeline/e2e-tektoncd-pipeline.yaml
+

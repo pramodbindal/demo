@@ -1,0 +1,22 @@
+apiVersion: kueue.x-k8s.io/v1beta1
+kind: Workload
+metadata:
+  name: sample-wl
+#  namespace: default
+spec:
+  active: true
+  queueName: my-queue
+  podSets:
+    - count: 3
+      name: main
+      template:
+        spec:
+          containers:
+            - image: gcr.io/k8s-staging-perf-tests/sleep:latest
+              imagePullPolicy: Always
+              name: container
+              resources:
+                requests:
+                  cpu: "1"
+                  memory: 200Mi
+          restartPolicy: Never
