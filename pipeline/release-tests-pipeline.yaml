@@ -116,7 +116,7 @@ spec:
     #Deploy Operator
     - name: deploy-operator
       runAfter:
-        - create-cluster
+        - provision-cluster
       params:
         - name: indexImage
           value: "$(tasks.parse-metadata.results.component-container-image)"
