@@ -261,7 +261,7 @@ spec:
               - name: GOMODCACHE
                 value: /source/cache/gomodcache
               - name: KUBECONFIG
-                value: "/credentials/$(tasks.deploy-operator.results.kubeconfig)"
+                value: "/credentials/$(steps.get-kubeconfig.results.kubeconfig)"
               - name: GITHUB_TOKEN
                 valueFrom:
                   secretKeyRef:
@@ -281,7 +281,7 @@ spec:
               - name: GOMODCACHE
                 value: /source/cache/gomodcache
               - name: KUBECONFIG
-                value: "/credentials/$(tasks.deploy-operator.results.kubeconfig)"
+                value: "/credentials/$(steps.get-kubeconfig.results.kubeconfig)"
             script: |
               gauge run --tags="" --log-level=debug --verbose specs/pipelines/
               gauge run --tags="" --log-level=debug --verbose specs/triggers/
