@@ -115,25 +115,24 @@ spec:
                 value: m5.2xlarge
     #Deploy Operator
     - name: deploy-operator
-      runAfter:
-        - provision-cluster
       params:
-        - name: bundleImage
+        - name: indexImage
           value: "$(tasks.parse-metadata.results.component-container-image)"
         - name: namespace
           value: "$(params.NAMESPACE)"
       taskSpec:
-        volumes:
-          - name: credentials
-            emptyDir: { }
-        results:
-          - name: kubeconfig
-            value: "$(steps.get-kubeconfig.results.kubeconfig)"
         params:
-          - name: bundleImage
+          - name: indexImage
             type: string
           - name: namespace
             type: string
+        volumes:
+          - name: credentials
+            emptyDir: { }
+        stepTemplate:
+          volumeMounts:
+            - name: credentials
+              mountPath: /credentials
         steps:
           - name: get-kubeconfig
             ref:
@@ -152,20 +151,48 @@ spec:
                 value: "$(tasks.provision-cluster.results.clusterName)"
               - name: credentials
                 value: credentials
-          - name: operator-sdk-run-bundle
-            image: quay.io/operator-framework/operator-sdk:latest
+          - name: create-catalog-source
+            image: $(params.image)
             env:
               - name: KUBECONFIG
                 value: "/credentials/$(steps.get-kubeconfig.results.kubeconfig)"
-            volumeMounts:
-              - name: credentials
-                mountPath: /credentials
-            args:
-              - run
-              - bundle
-              - --namespace
-              - "$(params.namespace)"
-              - "$(params.bundleImage)"
+            script: |
+              #!/usr/bin/env bash
+              cat <<EOF | oc apply -f-
+              apiVersion: operators.coreos.com/v1alpha1
+              kind: CatalogSource
+              metadata:
+                name: custom-osp-nightly
+                namespace: openshift-marketplace
+              spec:
+                sourceType: grpc
+                image: $(params.indexImage)
+                displayName: "Custom OSP Nightly"
+                updateStrategy:
+                  registryPoll:
+                    interval: 30m
+              EOF
+
+          - name: create-subscription
+            image: $(params.image)
+            env:
+              - name: KUBECONFIG
+                value: "/credentials/kubeconfig"
+            script: |
+              #!/usr/bin/env bash
+              sleep 10
+              cat <<EOF | oc apply -f-
+              apiVersion: operators.coreos.com/v1alpha1
+              kind: Subscription
+              metadata:
+                name: openshift-pipelines-operator
+                namespace: $(params.namespace)
+              spec:
+                channel: latest
+                name: openshift-pipelines-operator-rh
+                source: custom-osp-nightly
+                sourceNamespace: openshift-marketplace
+              EOF
     #E2e Test
     - name: e2e-test
       runAfter:
@@ -241,10 +268,10 @@ spec:
                     key: github-token
                     name: github
                     optional: true
-            script:  |
+            script: |
               gauge run --tags="" --log-level=debug --verbose specs/konflux-olm.spec
 
-              
+
           - name: run-e2e-tests
             image: $(params.image)
             workingDir: /source/repo
@@ -256,9 +283,9 @@ spec:
               - name: KUBECONFIG
                 value: "/credentials/$(tasks.deploy-operator.results.kubeconfig)"
             script: |
-                gauge run --tags="" --log-level=debug --verbose specs/pipelines/
-                gauge run --tags="" --log-level=debug --verbose specs/triggers/
-                gauge run --tags="" --log-level=debug --verbose specs/pac/
+              gauge run --tags="" --log-level=debug --verbose specs/pipelines/
+              gauge run --tags="" --log-level=debug --verbose specs/triggers/
+              gauge run --tags="" --log-level=debug --verbose specs/pac/
 
 
 
