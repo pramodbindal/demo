@@ -16,6 +16,10 @@ spec:
       name: NAMESPACE
       default: default
       type: string
+#    - name: image
+#      type: string
+#      default: quay.io/openshift-pipeline/ci:latest
+
   tasks:
     - name: parse-metadata
       taskRef:
@@ -103,7 +107,6 @@ spec:
         - provision-cluster
       params:
         - name: bundleImage
-          #          value: quay.io/redhat-user-workloads/tekton-ecosystem-tenant/operator-main/bundle:on-pr-50f60424789114acc5c6644cbea516e475c439d0
           value: "$(tasks.parse-metadata.results.component-container-image)"
         - name: namespace
           value: "$(params.NAMESPACE)"
