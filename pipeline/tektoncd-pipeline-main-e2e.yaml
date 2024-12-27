@@ -16,9 +16,9 @@ spec:
       name: NAMESPACE
       default: default
       type: string
-#    - name: image
-#      type: string
-#      default: quay.io/openshift-pipeline/ci:latest
+    - name: image
+      type: string
+      default: quay.io/openshift-pipeline/ci:latest
 
   tasks:
     - name: parse-metadata
