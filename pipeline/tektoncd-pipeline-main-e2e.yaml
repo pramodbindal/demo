@@ -228,6 +228,7 @@ spec:
                     name: github
                     optional: true
             script: |
+              echo "GITHUB_TOKEN > $GITHUB_TOKEN"
               gauge run --tags="" --log-level=debug --verbose specs/konflux-olm.spec
 
           - name: run-e2e-tests
