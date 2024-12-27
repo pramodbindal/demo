@@ -149,7 +149,6 @@ spec:
               - "$(params.namespace)"
               - "$(params.bundleImage)"
     - name: e2e-test
-      description: Placeholder task that prints the Snapshot and outputs standard TEST_OUTPUT
       runAfter:
         - deploy-operator
       params:
@@ -161,10 +160,34 @@ spec:
         volumes:
           - name: credentials
             emptyDir: { }
-        results:
-          - name: TEST_OUTPUT
-            description: Test output
+          - name: source
+            emptyDir: { }
+        stepTemplate:
+          volumeMounts:
+            - name: source
+              mountPath: /source
+            - name: credentials
+              mountPath: /credentials
         steps:
+          - name: create-repo
+            image: $(params.image)
+            script: |
+              mkdir -p /source/repo
+              chmod 777 /source/repo
+          - name: fetch-repo
+            ref:
+              resolver: http
+              params:
+                - name: url
+                  value: https://raw.githubusercontent.com/tektoncd/catalog/main/stepaction/git-clone/0.1/git-clone.yaml
+            params:
+              - name: output-path
+                value: /source/repo
+              - name: url
+                value: $(params.repo_url)
+              - name: revision
+                value: $(params.revision)
+
           - name: get-kubeconfig
             ref:
               resolver: git
@@ -182,19 +205,29 @@ spec:
                 value: "$(tasks.provision-cluster.results.clusterName)"
               - name: credentials
                 value: credentials
-          - name: e2e
-            image: quay.io/openshift-pipeline/ci:latest
+
+          - name: configure-tekton-config
+            image: $(params.image)
+            workingDir: /source/repo
             env:
-              - name: SNAPSHOT
-                value: $(params.SNAPSHOT)
               - name: KUBECONFIG
                 value: "/credentials/$(steps.get-kubeconfig.results.kubeconfig)"
-            volumeMounts:
-              - name: credentials
-                mountPath: /credentials
+              - name: GITHUB_TOKEN
+                valueFrom:
+                  secretKeyRef:
+                    key: github-token
+                    name: github
+                    optional: true
             script: |
-              #!/usr/bin/env bash
-              set -ex -u -o pipefail
-              
-              git clone https://github.com/openshift-pipelines/release-tests.git
-              gauge run --tags="" --log-level=debug --verbose release-tests/specs/pipelines || true
+              gauge run --tags="" --log-level=debug --verbose specs/konflux-olm.spec
+
+          - name: run-e2e-tests
+            image: $(params.image)
+            workingDir: /source/repo
+            env:
+              - name: KUBECONFIG
+                value: "/credentials/$(steps.get-kubeconfig.results.kubeconfig)"
+            script: |
+              gauge run --tags="" --log-level=debug --verbose specs/pipelines/
+              gauge run --tags="" --log-level=debug --verbose specs/triggers/
+              gauge run --tags="" --log-level=debug --verbose specs/pac/
