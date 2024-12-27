@@ -19,6 +19,12 @@ spec:
     - name: image
       type: string
       default: quay.io/openshift-pipeline/ci:latest
+    - name: repo_url
+      type: string
+      default: https://github.com/pramodbindal/release-tests
+    - name: revision
+      type: string
+      default: master
 
   tasks:
     - name: parse-metadata
