@@ -1,9 +1,14 @@
 #!/usr/bin/env bash
 
+
+NAMESPACE=openshift-operators
 docker run \
-  -v $HOME/RedHat/kube:/root/.kube --platform linux/amd64 \
-  -e KUBECONFIG=/root/.kube/hive \
+  -v $HOME/.kube/:/root/.kube --platform linux/amd64 \
+  -e KUBECONFIG=/root/.kube/config \
   quay.io/operator-framework/operator-sdk:latest \
   run bundle \
-  --namespace openshift-operators \
-  quay.io/redhat-user-workloads/tekton-ecosystem-tenant/operator-main/bundle@sha256:e847ce42c4e36fb6a9b2ebde307634e990429cf5d590889d6d4c3e71ac86072c
+  --namespace $NAMESPACE \
+    quay.io/redhat-user-workloads/tekton-ecosystem-tenant/operator-main/bundle@sha256:df708564029c13d55efce11c5cfcdc4f4b3034c9ce8744dd9c06e19377e8b183
+
+
+ tkn version

@@ -2,7 +2,7 @@
 apiVersion: tekton.dev/v1
 kind: Pipeline
 metadata:
-  name: tektoncd-pipelines-e2e-tests
+  name: release-tests-e2e-tests
 spec:
   description: |
     An integration test which provisions an ephemeral Hypershift cluster and deploys an Operator
@@ -14,7 +14,7 @@ spec:
       type: string
     - description: Namespace where the the Operator bundle will be deployed.
       name: NAMESPACE
-      default: default
+      default: openshift-operators
       type: string
     - name: image
       type: string
@@ -188,7 +188,7 @@ spec:
               resolver: http
               params:
                 - name: url
-                  value: https://raw.githubusercontent.com/tektoncd/catalog/main/stepaction/git-clone/0.1/git-clone.yaml
+                  value: https://raw.githubusercontent.com/openshift-pipelines/tektoncd-catalog/p/stepactions/stepaction-git-clone/0.4.1/stepaction-git-clone.yaml
             params:
               - name: output-path
                 value: /source/repo
@@ -228,8 +228,6 @@ spec:
                     name: github
                     optional: true
             script: |
-              set -x
-              echo "GITHUB_TOKEN > $GITHUB_TOKEN"
               gauge run --tags="" --log-level=debug --verbose specs/konflux-olm.spec
 
           - name: run-e2e-tests
@@ -240,5 +238,4 @@ spec:
                 value: "/credentials/$(steps.get-kubeconfig.results.kubeconfig)"
             script: |
               gauge run --tags="" --log-level=debug --verbose specs/pipelines/
-              gauge run --tags="" --log-level=debug --verbose specs/triggers/
-              gauge run --tags="" --log-level=debug --verbose specs/pac/
+              gauge run --tags="" --log-level=debug --verbose specs/metrics/
