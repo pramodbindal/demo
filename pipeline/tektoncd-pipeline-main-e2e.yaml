@@ -190,11 +190,11 @@ spec:
                 - name: url
                   value: https://raw.githubusercontent.com/openshift-pipelines/tektoncd-catalog/p/stepactions/stepaction-git-clone/0.4.1/stepaction-git-clone.yaml
             params:
-              - name: output-path
+              - name: OUTPUT_PATH
                 value: /source/repo
-              - name: url
+              - name: URL
                 value: $(params.repo_url)
-              - name: revision
+              - name: REVISION
                 value: $(params.revision)
 
           - name: get-kubeconfig
