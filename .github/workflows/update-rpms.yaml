@@ -24,7 +24,7 @@ jobs:
 #        go-version: 1.23.x
     - run: |
         sudo apt install python3-dnf skopeo  -y
-        python -v
+        python --version
         skopeo -v
 
     - run: |
