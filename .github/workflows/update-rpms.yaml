@@ -2,6 +2,9 @@
 name: Update rpms for konflux build
 
 on:
+  push:
+    branches:
+      - 'main'
   schedule:
     - cron: "0 6 * * *" # Daily at 06:00.
   workflow_dispatch: # Manual workflow trigger
@@ -22,5 +25,6 @@ jobs:
     - id: set-matrix
       run: |
         sudo apt install python3-dnf skopeo  -y
+        pip install  https://github.com/konflux-ci/rpm-lockfile-prototype/archive/refs/tags/v0.13.1.tar.gz
     outputs:
       projects: ${{ steps.set-matrix.outputs.projects }}
