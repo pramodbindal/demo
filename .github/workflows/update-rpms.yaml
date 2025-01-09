@@ -28,7 +28,8 @@ jobs:
         pip install  https://github.com/konflux-ci/rpm-lockfile-prototype/archive/refs/tags/v0.13.1.tar.gz
     - run: |
         BASE_IMAGE=registry.access.redhat.com/ubi9/ubi-minimal:latest
-        docker run -it $BASE_IMAGE cat /etc/yum.repos.d/ubi.repo > ./.konflux/rpms/ubi.repo
+        docker run -it $BASE_IMAGE cat /etc/yum.repos.d/ubi.repo > ./ubi.repo
+        cat ./ubi.repo
     - run: |
         rpm-lockfile-prototype --image $BASE_IMAGE ./.konflux/rpms/rpms.in.yaml
     
