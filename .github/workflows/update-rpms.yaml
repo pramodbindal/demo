@@ -1,5 +1,5 @@
 ---
-name: Update RPMS for konflux configurations
+name: Update rpms for konflux build
 
 on:
   schedule:
@@ -16,11 +16,11 @@ jobs:
     steps:
     - name: Checkout the repository
       uses: actions/checkout@v4
-    - uses: actions/setup-go@v5
-      with:
-        go-version: 1.23.x
+#    - uses: actions/setup-go@v5
+#      with:
+#        go-version: 1.23.x
     - id: set-matrix
       run: |
-        dnf install python3-dnf skopeo  -y
+        sudo apt install python3-dnf skopeo  -y
     outputs:
       projects: ${{ steps.set-matrix.outputs.projects }}
