@@ -29,7 +29,8 @@ jobs:
 
     - run: |
         python -m venv venv --system-site-packages
-        pip install  https://github.com/konflux-ci/rpm-lockfile-prototype/archive/refs/tags/v0.13.1.tar.gz
+        . venv/bin/activate
+        python -m pip install https://github.com/konflux-ci/rpm-lockfile-prototype/archive/refs/tags/v0.13.1.tar.gz
         rpm-lockfile-prototype --help
     - run: |
         BASE_IMAGE=registry.access.redhat.com/ubi9/ubi-minimal:latest
