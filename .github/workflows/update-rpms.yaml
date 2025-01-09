@@ -22,9 +22,13 @@ jobs:
 #    - uses: actions/setup-go@v5
 #      with:
 #        go-version: 1.23.x
-    - id: set-matrix
-      run: |
+    - run: |
         sudo apt install python3-dnf skopeo  -y
+    - run: |
         pip install  https://github.com/konflux-ci/rpm-lockfile-prototype/archive/refs/tags/v0.13.1.tar.gz
-    outputs:
-      projects: ${{ steps.set-matrix.outputs.projects }}
+    - run: |
+        BASE_IMAGE=registry.access.redhat.com/ubi9/ubi-minimal:latest
+        docker run -it $BASE_IMAGE cat /etc/yum.repos.d/ubi.repo > ./.konflux/rpms/ubi.repo
+    - run: |
+        rpm-lockfile-prototype --image $BASE_IMAGE ./.konflux/rpms/rpms.in.yaml
+    
