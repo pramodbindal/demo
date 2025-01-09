@@ -17,13 +17,16 @@ jobs:
   generate-rpms:
     runs-on: ubuntu-latest
     steps:
-    - name: Checkout the repository
-      uses: actions/checkout@v4
+#    - name: Checkout the repository
+#      uses: actions/checkout@v4
 #    - uses: actions/setup-go@v5
 #      with:
 #        go-version: 1.23.x
     - run: |
-        sudo apt install python3-dnf skopeo  -y
+        apt install python3-dnf skopeo  -y
+        python -v
+        skopeo -v
+
     - run: |
         pip install  https://github.com/konflux-ci/rpm-lockfile-prototype/archive/refs/tags/v0.13.1.tar.gz
         rpm-lockfile-prototype --help
