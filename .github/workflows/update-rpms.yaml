@@ -26,6 +26,7 @@ jobs:
         sudo apt install python3-dnf skopeo  -y
     - run: |
         pip install  https://github.com/konflux-ci/rpm-lockfile-prototype/archive/refs/tags/v0.13.1.tar.gz
+        rpm-lockfile-prototype --help
     - run: |
         BASE_IMAGE=registry.access.redhat.com/ubi9/ubi-minimal:latest
         docker run $BASE_IMAGE cat /etc/yum.repos.d/ubi.repo
