@@ -17,24 +17,14 @@ jobs:
   generate:
     runs-on: ubuntu-latest
     steps:
-#    - name: Checkout the repository
-#      uses: actions/checkout@v4
-#    - uses: actions/setup-go@v5
-#      with:
-#        go-version: 1.23.x
     - run: |
-        sudo apt install python3-dnf python3-venv skopeo  -y
-        python --version
-        skopeo -v
-
-    - run: |
-        python -m venv venv --system-site-packages
-        . venv/bin/activate
-        python -m pip install https://github.com/konflux-ci/rpm-lockfile-prototype/archive/refs/tags/v0.13.1.tar.gz
-        rpm-lockfile-prototype --help
+        sudo apt-get -y install podman
     - run: |
         BASE_IMAGE=registry.access.redhat.com/ubi9/ubi-minimal:latest
-        docker run $BASE_IMAGE cat /etc/yum.repos.d/ubi.repo
-    - run: |
-        rpm-lockfile-prototype --image $BASE_IMAGE ./.konflux/rpms/rpms.in.yaml
-    
+        podman run \
+          -e BASE_IMAGE=$BASE_IMAGE \
+          -v ./:/rpms -w /rpms -it  $BASE_IMAGE  sh -c "
+            microdnf install -y python3-dnf skopeo pip
+            python -m pip install https://github.com/konflux-ci/rpm-lockfile-prototype/archive/refs/tags/v0.13.1.tar.gz
+            rpm-lockfile-prototype --image $BASE_IMAGE rpms.in.yaml
+          "
