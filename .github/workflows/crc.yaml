@@ -12,6 +12,7 @@ jobs:
       - run: |
           echo "Running e2e tests with CRC on macOS"
           curl -LO https://developers.redhat.com/content-gateway/rest/mirror/pub/openshift-v4/clients/crc/latest/crc-macos-arm64.zip
+          ls -al
           unzip crc-macos-arm64.zip
           ls -l
           sudo ./crc setup
