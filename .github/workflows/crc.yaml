@@ -30,8 +30,14 @@ jobs:
           # Use the extracted version in the tar command
           tar -xf ${archive_name} --directory /usr/local/bin --strip-components=1 "crc-linux-${latest_version}-$arch/crc"
 
-      - name: Testing CRC
+      - name: Verify CRC Installation
         run: |
           which crc
           ls -l /usr/local/bin/crc
           crc --help
+
+      - name: Install required virtualization software
+        run: |
+          sudo apt-get update
+          sudo apt install qemu-kvm libvirt-daemon libvirt-daemon-system
+          sudo usermod -a -G libvirt $USER
