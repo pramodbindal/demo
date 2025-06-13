@@ -11,7 +11,7 @@ concurrency:
 jobs:
   build:
     name: Run E2E Tests on CRC
-    runs-on: macos-latest
+    runs-on: ubuntu-latest
     env:
       SHELL: /bin/bash
       KUBECONFIG: '/Users/runner/.kube/config'
