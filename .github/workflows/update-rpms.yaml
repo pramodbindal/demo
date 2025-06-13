@@ -21,10 +21,11 @@ jobs:
         sudo apt-get -y install podman
     - run: |
         BASE_IMAGE=registry.access.redhat.com/ubi9/ubi-minimal:latest
-        podman run \
+        podman run --rm\
           -e BASE_IMAGE=$BASE_IMAGE \
-          -v ./:/rpms -w /rpms -it  $BASE_IMAGE  sh -c "
-            microdnf install -y python3-dnf skopeo pip
+          -v ./rpms:/rpms -w /rpms -it  $BASE_IMAGE  sh -c "
+            cat /etc/yum.repos.d/ubi.repo > ./ubi.repo
+            microdnf install -y python3-dnf skopeo pip          
             python -m pip install https://github.com/konflux-ci/rpm-lockfile-prototype/archive/refs/tags/v0.13.1.tar.gz
-            rpm-lockfile-prototype --image $BASE_IMAGE rpms.in.yaml
+            rpm-lockfile-prototype --image $BASE_IMAGE ./rpms.in.yaml
           "

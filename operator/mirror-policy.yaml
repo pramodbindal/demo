@@ -1,0 +1,15 @@
+# Please Note that ImageContentSourcePolicy works with digests only.
+#  if using tags then image will be pulled from  source not from mirrors
+
+apiVersion: operator.openshift.io/v1alpha1
+kind: ImageContentSourcePolicy
+metadata:
+  name: mirror-policy
+spec:
+  repositoryDigestMirrors:
+    - source: registry.stage.redhat.io/openshift-pipelines
+      mirrors:
+        - quay.io/openshift-pipeline
+    - source: registry-proxy.engineering.redhat.com
+      mirrors:
+        - quay.io/openshift-pipeline

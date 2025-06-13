@@ -1,0 +1,14 @@
+---
+name: e2e-crc
+
+on:
+  push:
+  workflow_dispatch: # Manual workflow trigger
+
+jobs:
+  e2e-crc:
+    runs-on: macos-latest
+    steps:
+      - run: |
+          echo "Running e2e tests with CRC on macOS"
+      

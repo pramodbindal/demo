@@ -1,17 +1,17 @@
 apiVersion: tekton.dev/v1
 kind: PipelineRun
 metadata:
-  generateName: pbindal-pipelines-e2e-tests-
+  generateName: pbindal-tenant-pipeline-next-
   labels:
     appstudio.openshift.io/component: operator-next-index-4-17
 spec:
   params:
     - name: release
-      value: tekton-ecosystem-tenant/tekton-caches-next-69tfz-8db3f6b-z9bxf
+      value: tekton-ecosystem-tenant/tektoncd-triggers-next-69tfz-8db3f6b-z9bxf
     - name: releasePlan
-      value: tekton-ecosystem-tenant/tekton-caches-next-rp
+      value: tekton-ecosystem-tenant/tektoncd-triggers-next-rp
     - name: snapshot
-      value: tekton-ecosystem-tenant/tekton-caches-next-69tfz
+      value: tekton-ecosystem-tenant/tektoncd-triggers-next-cgdwt
     - name: released_version
       value: 5.0.5
     - name: taskGitUrl
@@ -22,9 +22,9 @@ spec:
     resolver: git
     params:
       - name: url
-        value: https://github.com/pramodbindal/operator
+        value: https://github.com/pramodbindal/demo
       - name: revision
         value: main
       - name: pathInRepo
-        value: .konflux/tekton/bundle-e2e-pipeline.yaml
+        value: pipeline/release-pipeline.yaml
 
