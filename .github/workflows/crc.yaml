@@ -23,7 +23,7 @@ jobs:
           | tail -n1 \
           | sed 's/.*\///; s/\^{}//; s/^v//')
           
-          arch=$(uname -m)
+          arch=amd64
           archive_name="crc-linux-$arch.tar.xz"
           wget "https://developers.redhat.com/content-gateway/file/pub/openshift-v4/clients/crc/${latest_version}/${archive_name}"
           
