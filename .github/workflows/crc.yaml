@@ -33,4 +33,5 @@ jobs:
       - name: Testing CRC
         run: |
           which crc
+          ls -l /usr/local/bin/crc
           crc --help
