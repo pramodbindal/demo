@@ -41,3 +41,21 @@ jobs:
           sudo apt-get update
           sudo apt install qemu-kvm libvirt-daemon libvirt-daemon-system
           sudo usermod -a -G libvirt $USER
+      - name: CRC Configuration
+        env:
+          PULL_SECRET_CONTENT: ${{ secrets.CRC_TOKEN }}
+        run: |
+          crc config set preset microshift
+          echo "$PULL_SECRET_CONTENT" > pull-secret
+          crc config set pull-secret-file pull-secret
+          crc config set network-mode user
+          crc config set memory 14000
+
+      - name: Setup the crc
+        run: sudo -su $USER crc setup
+          - name: Start the crc
+            run: sudo -su $USER crc start
+      - name: Set Creds
+        run: |
+          sudo -su $USER crc oc-env
+          echo "KUBECONFIG=$HOME/.crc/machines/crc/kubeconfig" >> $GITHUB_ENV
