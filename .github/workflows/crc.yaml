@@ -1,20 +1,36 @@
----
-name: e2e-crc
-
+name: Test Tekton-Cache on CRC
 on:
   push:
-  workflow_dispatch: # Manual workflow trigger
+    branches:
+      - main
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
-  e2e-crc:
+  build:
+    name: Run E2E Tests on CRC
     runs-on: macos-latest
-    steps:
-      - run: |
-          echo "Running e2e tests with CRC on macOS"
-          curl -LO https://developers.redhat.com/content-gateway/rest/mirror/pub/openshift-v4/clients/crc/latest/crc-macos-arm64.zip
-          ls -al
-          unzip crc-macos-arm64.zip
-          ls -l
-          sudo ./crc setup
+    env:
+      SHELL: /bin/bash
+      KUBECONFIG: '/Users/runner/.kube/config'
 
-      
+    steps:
+      - name: Download CRC
+        run: |
+          latest_version=$(git -c 'versionsort.suffix=-' ls-remote --tags --sort='v:refname' https://github.com/crc-org/crc \
+          | tail -n1 \
+          | sed 's/.*\///; s/\^{}//; s/^v//')
+          
+          arch=$(uname -m)
+          archive_name="crc-linux-$arch.tar.xz"
+          wget "https://developers.redhat.com/content-gateway/file/pub/openshift-v4/clients/crc/${latest_version}/${archive_name}"
+          
+          # Use the extracted version in the tar command
+          tar -xf ${archive_name} --directory /usr/local/bin --strip-components=1 "crc-linux-${latest_version}-$arch/crc"
+
+      - name: Testing CRC
+        run: |
+          which crc
+          crc --help
