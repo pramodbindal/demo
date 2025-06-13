@@ -53,8 +53,8 @@ jobs:
 
       - name: Setup the crc
         run: sudo -su $USER crc setup
-          - name: Start the crc
-            run: sudo -su $USER crc start
+      - name: Start the crc
+        run: sudo -su $USER crc start
       - name: Set Creds
         run: |
           sudo -su $USER crc oc-env
