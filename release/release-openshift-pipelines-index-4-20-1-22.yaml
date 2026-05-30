@@ -1,0 +1,18 @@
+---
+apiVersion: appstudio.redhat.com/v1alpha1
+kind: Release
+metadata:
+  labels:
+    appstudio.openshift.io/application: openshift-pipelines-index-4-20-1-22
+  generateName: openshift-pipelines-index-4-20-1-22-stage-release-
+  namespace: tekton-ecosystem-tenant
+spec:
+  data:
+    mapping:
+      defaults:
+        tags:
+          - "v1.22.2-stage"
+
+  gracePeriodDays: 10
+  releasePlan: openshift-pipelines-4-20-1-22-fbc-stage
+  snapshot: openshift-pipelines-index-4-20-1-22-20260530-091710-000

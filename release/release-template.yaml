@@ -1,0 +1,17 @@
+apiVersion: appstudio.redhat.com/v1alpha1
+kind: Release
+metadata:
+  labels:
+    appstudio.openshift.io/application: ${APPLICATION}
+  generateName: ${APPLICATION}-${ENV}-release-
+  namespace: tekton-ecosystem-tenant
+spec:
+  data:
+    mapping:
+      defaults:
+        tags:
+          - "v${RELEASE}-${ENV}"
+
+  gracePeriodDays: 10
+  releasePlan: ${RELEASE_PLAN}
+  snapshot: ${SNAPSHOT}

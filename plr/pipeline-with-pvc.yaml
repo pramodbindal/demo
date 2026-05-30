@@ -1,0 +1,32 @@
+apiVersion: tekton.dev/v1
+kind: PipelineRun
+metadata:
+  generateName: pipeline-with-pvc-
+  labels:
+    app: test
+spec:
+  pipelineSpec:
+    workspaces:
+      - name: shared-pvc
+
+    tasks:
+      - name: echo
+        taskSpec:
+          steps:
+            - name: echo
+              image: registry.access.redhat.com/ubi9/ubi
+              script: |
+                #!bin/bash
+                cd $(workspaces.shared-pvc.path)
+                pwd
+                sleep 30
+                echo "Hello World"
+  workspaces:
+    - name: shared-pvc
+      volumeClaimTemplate:
+        spec:
+          accessModes:
+            - ReadWriteOnce # Standard mode for a single node reading/writing
+          resources:
+            requests:
+              storage: 100Mi  # Specify the size of the PVC here

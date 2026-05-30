@@ -1,0 +1,42 @@
+{
+  "v4.14": {
+    "index_image": "registry-proxy.engineering.redhat.com/rh-osbs/iib:1151986",
+    "index_image_resolved": "registry-proxy.engineering.redhat.com/rh-osbs/iib@sha256:c17e1275a7c72bd168891c7fe1d6121b28cab0c5a9d39ddfcf26481382464681"
+  },
+  "v4.16": {
+    "index_image": "registry-proxy.engineering.redhat.com/rh-osbs/iib:1151985",
+    "index_image_resolved": "registry-proxy.engineering.redhat.com/rh-osbs/iib@sha256:83a4142a50a5063aaa9c7e98a7f444ac089584d1513088131a45dffd99b9280e"
+  },
+  "v4.17": {
+    "index_image": "registry-proxy.engineering.redhat.com/rh-osbs/iib:1151987",
+    "index_image_resolved": "registry-proxy.engineering.redhat.com/rh-osbs/iib@sha256:e49b8442685ad432b083fb8bfe489f051c5285a05aeff8580f4cc12a5bd6854c"
+  },
+  "v4.18": {
+    "index_image": "registry-proxy.engineering.redhat.com/rh-osbs/iib:1151988",
+    "index_image_resolved": "registry-proxy.engineering.redhat.com/rh-osbs/iib@sha256:06b342669fa440eff91488263550b89b64a9b46d028cb1288fa4c78bdd27e3b0"
+  },
+  "v4.19": {
+    "index_image": "registry-proxy.engineering.redhat.com/rh-osbs/iib:1151989",
+    "index_image_resolved": "registry-proxy.engineering.redhat.com/rh-osbs/iib@sha256:92368c4d8fec7fbdef729d355181c00f0d722dae54ce6e3e2290ae3eab94f41c"
+  },
+  "v4.20": {
+    "index_image": "registry-proxy.engineering.redhat.com/rh-osbs/iib:1151995",
+    "index_image_resolved": "registry-proxy.engineering.redhat.com/rh-osbs/iib@sha256:e836ab4a7c8ea95675c43b0cbd026c9310814aa5a1f152d00330090aedf6609b"
+  },
+  "v4.21": {
+    "index_image": "registry-proxy.engineering.redhat.com/rh-osbs/iib:1151993",
+    "index_image_resolved": "registry-proxy.engineering.redhat.com/rh-osbs/iib@sha256:cc375662c6fc9038fec7dce271749c38b34ccc77b3813c5c6301a3dbfe727373"
+  },
+  "v4.22": {
+    "index_image": "registry-proxy.engineering.redhat.com/rh-osbs/iib:1151991",
+    "index_image_resolved": "registry-proxy.engineering.redhat.com/rh-osbs/iib@sha256:7d1c0ebb98fafa37c351dee3d7c0f9e8228d8c22e88941839a644f2c6cf44cf0"
+  },
+  "v4.23": {
+    "index_image": "registry-proxy.engineering.redhat.com/rh-osbs/iib:1151992",
+    "index_image_resolved": "registry-proxy.engineering.redhat.com/rh-osbs/iib@sha256:c55b57c4b40c1982b89978dfdc9b6e8bc581c2507fe3d67f9d75a50674640dfd"
+  },
+  "v5.0": {
+    "index_image": "registry-proxy.engineering.redhat.com/rh-osbs/iib:1151994",
+    "index_image_resolved": "registry-proxy.engineering.redhat.com/rh-osbs/iib@sha256:6e517a02d2da724df2fcc3a20de586b0d508df221fc7296c6f78ee43e3b22bc7"
+  }
+}

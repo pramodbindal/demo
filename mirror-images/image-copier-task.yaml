@@ -1,0 +1,92 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: skopeo-runner
+secrets:
+  - name: release-registry-openshift-pipelines-quay
+
+---
+apiVersion: tekton.dev/v1
+kind: Task
+metadata:
+  name: image-copier
+spec:
+  params:
+    - name: TAG
+      type: string
+      description: "The target image tag"
+    - name: JSON_CONTENT
+      type: string
+      description: "The raw JSON content"
+  stepTemplate:
+    env:
+      # 1. Redirect Tekton's credential helper to a writable directory
+      - name: HOME
+        value: /tmp
+  steps:
+    - name: run-copy-script
+      image: quay.io/openshift-pipeline/ci:latest
+      env:
+        - name: TAG
+          value: $(params.TAG)
+      script: |
+        #!/bin/sh
+        set -eu
+                
+        cd /workspace
+        
+
+
+        echo "Writing JSON data from parameters..."
+        cat << 'EOF' > stage-images.json
+        $(params.JSON_CONTENT)
+        EOF
+
+        JSON_FILE="stage-images.json"
+        DEST_REGISTRY="quay.io/openshift-pipeline"
+
+        if [[ -z "$TAG" ]]; then
+          echo "❌ Tag is required."
+          exit 1
+        fi
+
+        echo "🚀 Starting image copy"
+        echo "   Tag:          ${TAG}"
+        echo "   Registry:     ${DEST_REGISTRY}"
+        echo "   Config:       ${JSON_FILE}"
+        echo "──────────────────────────────────────────────────"
+
+        SUCCESS=()
+        FAILED=()
+
+        while IFS="=" read -r version src; do
+          ocp_version="${version#v}"
+          dest_repo="pipelines-index-${ocp_version}"
+          dest="docker://${DEST_REGISTRY}/${dest_repo}:${TAG}"
+
+          echo ""
+          echo "📦 Copying ${version}"
+          echo "   SRC:  ${src}"
+          echo "   DEST: ${dest}"
+
+          if skopeo copy --all --src-tls-verify=false --authfile=$HOME/.docker/config.json \
+              "docker://${src}" \
+              "${dest}"; then
+            echo "   ✅ Success: ${version}"
+            SUCCESS+=("$version")
+          else
+            echo "   ❌ Failed:  ${version}"
+            FAILED+=("$version")
+          fi
+
+        done < <(jq -r '. | to_entries[] | "\(.key)=\(.value.index_image_resolved)"' "$JSON_FILE")
+
+        echo ""
+        echo "══════════════════════════════════════════════════"
+        echo "📊 Summary"
+        echo "══════════════════════════════════════════════════"
+        echo "✅ Succeeded (${#SUCCESS[@]}): ${SUCCESS[*]:-none}"
+        echo "❌ Failed    (${#FAILED[@]}):  ${FAILED[*]:-none}"
+
+        [[ ${#FAILED[@]} -eq 0 ]] && exit 0 || exit 1
+
